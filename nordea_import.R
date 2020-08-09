@@ -1,4 +1,4 @@
-# nordea_import.R -- Import Nordea CSVs, categorize, and generate Ledger file.
+# nordea_import.R -- Categorize Nordea data and output Ledger file.
 # Copyright (C) 2020 Martin Edström
 
 # This program is free software: you can redistribute it and/or modify
@@ -13,15 +13,6 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-# On the problem of assigning IDs to identical datapoints: Consider that the
-# total count of transactions in a month will not change after that month. So if
-# I re-run the importer on another machine which collates differently and cause
-# a pair of identical rows to switch places, say 276 and 277, the rows with IDs
-# 275 and 278 are still the same, so there is no real harm done. And anything I
-# do after-the-fact to a row that has a duplicate, I'm likely to do to its
-# duplicate as well, so the important thing is that the duplicates together have
-# the same set of ids.
 
 source("common.R")
 
@@ -175,26 +166,24 @@ exception_ids <- c(
   252  # from Diana: 1600 rent 700 groceries
 , 1893, 1894, 1895, 1898, 1899  # JOHANNA ANDERSSON
   # , 2147, 2148 # Julbord pub (180 cash)
-, 2169  # Uniqlo (900 bras half-reimbursed, 200 umbrella)
-, 2324 # 138 me, 78 Clarence
+, 2169  # Uniqlo (900 half-reimbursed, 200 umbrella)
+, 2324 # 138 me, 78 C
 , 2417 # ahlens (my part cost 40)
 , 2430 # uniqlo (my part cost 149)
 , 2449 # dermastore perfumes (my part cost 359.10 + 566.10)
-, 2451 # 89 Clarence, 252 me, 79 split w/ Diana
-, 2499 # porcelain (200 me, 150 Diana)
+, 2451 # 89 C, 252 me, 79 split w/ D
+, 2499 # porcelain (200 me, 150 D)
 )
 
 not_split_ids <- c(
   2410, 2418 # coffee things
-, 2402, 2464, 2481, 2488, 2492 # food/alcohol during
-  # , 2505, 2506, 2507, 2514 # food/alcohol when Diana left
+, 2402, 2464, 2481, 2488, 2492 # food/alcohol
 )
 
 split_with_diana <- nordea_merged %>%
   filter(not(id %in% exception_ids) &
            not(id %in% not_split_ids) &
            posted >= ymd("2020-06-01") & posted <= ymd("2020-07-20") &
-           #month(posted) %in% c(6, 7) & year(posted) == 2020 &
            str_detect(credit_to, "Groceries|Fuel|Cafe|Alcohol|Restaurant")
   ) %>%
   mutate(ledger_output = slide(., with, str_glue(

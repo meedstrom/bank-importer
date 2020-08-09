@@ -1,4 +1,4 @@
-# avanza_import.R -- Import Avanza CSV, categorize, and generate Ledger file.
+# avanza_import.R -- Categorize Avanza data and output Ledger file.
 # Copyright (C) 2020 Martin Edström
 
 # This program is free software: you can redistribute it and/or modify
