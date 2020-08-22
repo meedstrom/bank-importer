@@ -1,0 +1,13 @@
+
+** Requirements
+- GNU R
+- The packages listed in =common.R=
+
+** Usage
+
+1. Download CSVs from Nordea, put them in a subdirectory called =nordea=.
+2. Execute =nordea_import.R=.
+
+This produces two files, =nordea_imported.ledger= and =nordea_exceptions.ledger=. I have a third ledger file that @includes only the first, and the exceptions are manually pasted in and edited.
+
+Why have exceptions? They are about complex events, involving transactions between multiple accounts or simply multiple transactions for the same thing (which may mean that several records are best merged into one), so it's easier to just enter them manually to get them into the right form.
